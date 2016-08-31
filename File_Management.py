@@ -44,9 +44,14 @@ class MyFirstGUI:
 		self.master = master
 		master.title("A simple GUI")
 		master.geometry("1500x800")
+
+		#Label interface
 		self.label = Label(master, text="Please select files to include/exclude")
 		self.label.pack()
+		#Button interface
 		self.greet_button = Button(master, text="Greet", command=self.greet)
+		self.greet_button.pack()
+		#This is our list of objects
 		self.listbox = Listbox(master, width=50, height=20)
 		self.listbox.pack()
 		self.listbox.insert(END)
@@ -54,9 +59,16 @@ class MyFirstGUI:
 		for item in dirlistAll:
 			self.listbox.insert(END, item)
 
-		self.greet_button.pack()
+		
 	def greet(self):
 		print("Greetings!")
+
+#Notes on this section:
+	# lbind allows for single and double clicking if single clicke then x if double then y
+	# Walk through the director?
+	# In State - If they select it it greys it out and they can no longer accces
+
+
 
 #--------------------------------------------------------------------------------------------------
 #--DEFINE FUNCTIONS
