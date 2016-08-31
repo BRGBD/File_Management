@@ -1,8 +1,16 @@
 import os
+import sys
+# Legacy code do not need, to ensure packagaes are running properly update system python path!
+	# os.chdir('C:\Anaconda3')
+	# search_paths=['C:\Anaconda3','C:\Anaconda3\lib','C:\Anaconda3\lib\site-packages']
+	# for x in search_paths:
+	# 	sys.path.append(x)
+	# print ('\n'.join(sys.path))
 import re
 from time import strftime
 import time
 import datetime
+import numpy
 import pandas as pd
 import msvcrt as m
 from tkinter import *
@@ -12,11 +20,22 @@ from tkinter import *
 #--------------------------------------------------------------------------------------------------
 #--INPUT (WHAT DIRECTORIES WILL BE TRACKED?)
 #--------------------------------------------------------------------------------------------------
+#SET USER
+usr = 'James'
+#Young G
 
-dirlistAll = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/GS Work', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/PBC', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/zArchive']
-highestDir = "//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY"
-dirlist = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY']
-#dirlist = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/GS Work', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/zArchive']
+if usr == 'James':
+	dirlistAll = ['//brg-DC-fs1.brg.local/HOME/jlewis/Python_TEST']
+	highestDir = '//brg-DC-fs1.brg.local/HOME/jlewis/Python_TEST'
+	dirlist = ['//brg-DC-fs1.brg.local/HOME/jlewis/Python_TEST']
+elif usr == 'Young G':
+	dirlistAll = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/GS Work', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/PBC', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/zArchive']
+	highestDir = "//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY"
+	dirlist = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY']
+	#dirlist = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/GS Work', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/zArchive']
+else:
+	print('FAIL - DEFINE USER')
+	GoblyGook
 #--------------------------------------------------------------------------------------------------
 #--DEFINE Classes
 #--------------------------------------------------------------------------------------------------
