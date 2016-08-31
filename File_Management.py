@@ -44,9 +44,16 @@ class MyFirstGUI:
 		self.master = master
 		master.title("A simple GUI")
 		master.geometry("1500x800")
-		self.label = Label(master, text="This is our first GUI!")
+		self.label = Label(master, text="Please select files to include/exclude")
 		self.label.pack()
 		self.greet_button = Button(master, text="Greet", command=self.greet)
+		self.listbox = Listbox(master, width=50, height=20)
+		self.listbox.pack()
+		self.listbox.insert(END)
+
+		for item in dirlistAll:
+			self.listbox.insert(END, item)
+
 		self.greet_button.pack()
 	def greet(self):
 		print("Greetings!")
