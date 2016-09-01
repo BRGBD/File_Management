@@ -32,18 +32,22 @@ elif usr == 'Young G':
 	#dirlist = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/GS Work', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/zArchive']
 else:
 	print('FAIL - DEFINE USER')
-	GoblyGook
+	GoblyGookgit 
 
 
 #List directories for path where executable is located (FOR TESTING POINT TO PERSONAL)
-mdirs=[]
+
 i=0
 for dirName, subdirList, fileList in os.walk(highestDir):
 	i = i + 1
 	#Retrieve only subdirs
-	if i != 1:
-		mdirs.append(dirName)
+	if i == 1:
+		mdirs=subdirList
+	print (dirName)
+	print (subdirList)
 
+for x in mdirs:
+	print(x)
 
 # dta = fm.operating(dirlist)
 # fm.output(dta)
@@ -63,9 +67,9 @@ class MENU_GUI(Frame):
 		self.label = Label(master, text="What process would you like to run?")
 		self.label.pack()
 		#User Options
-		self.greet_button = Button(master, text="Greet Me", command=self.greet)
+		self.greet_button = Button(master, text="Motivate Me", command=self.greet)
 		self.refresh_button = Button(master, text="Refresh Inventory", command=self.runinventory)
-		self.new_button = Button(master, text="Generate New Inventory", command=self.runinventory)
+		self.new_button = Button(master, text="Settings", command=self.newinventory)
 		self.greet_button.pack()
 		self.refresh_button.pack()
 		self.new_button.pack()
@@ -103,27 +107,32 @@ class MyFirstGUI(Frame):
 		Frame.__init__(self, master)
 		self.master = master
 		master.title("A simple GUI")
-		master.geometry("1500x800")
+		master.geometry("500x500")
 
 
 		#Label interface
 		self.label = Label(master, text="Please select files to include/exclude")
-		self.label.pack()
+		# self.label.pack()
 		#Button interface
 		self.greet_button = Button(master, text="Greet", command=self.greet)
+		# self.greet_button.pack()
 
 
 		menubar = Menu(self.master)
 		self.master.config(menu=menubar)
 		fileMenu = Menu(menubar)
-		menubar.add_command(label="New Inventory", command=self.run)
-		menubar.add_command(label="Refresh Inventory", command=self.onExit)
+		menubar.add_command(label="Save Settings", command=self.onExit)
 		menubar.add_command(label="Exit", command=self.onExit)
 
-
+		r = 0
 		for item in mdirs:
-			self.listbox.insert(END, item)
-		self.greet_button.pack()
+			r = r + 1
+			self.dir_button=  Button(master, text=item, command=self.onExit).grid(row = r, column=2, sticky=W)
+			self.dir_button = Checkbutton(master, variable=item, onvalue = 1, offvalue = 0, height=2, width = 20, anchor=W)
+			self.dir_button.grid(row = r, column=1, sticky=W)
+			self.dir_button.select()
+			
+		#Select all/unselect all buttom
 		
 	def greet(self):
 		print("Greetings!")
@@ -131,26 +140,3 @@ class MyFirstGUI(Frame):
 	def onExit(self):
 		self.quit()
 
-#--------------------------------------------------------------------------------------------------
-#--USER INTERACTION SECTION
-#--------------------------------------------------------------------------------------------------
-# Query User for which directories to exclude
-root = Tk()
-my_gui = MENU_GUI(root)
-root.mainloop()
-
-
-
-	
-#Notes on this section:
-	# lbind allows for single and double clicking if single clicke then x if double then y
-	# Walk through the director?
-	# In State - If they select it it greys it out and they can no longer accces
-
-
-#person = input('Enter your name: ')
-#print('Hello', person)
-
-#exclude directories mentioned by User
-exclude = ['PBC']
-#wait() # code used to pause the screen until the user interacts with it

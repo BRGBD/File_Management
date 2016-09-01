@@ -30,6 +30,8 @@ if usr == 'James':
 	dirlistAll = ['//brg-DC-fs1.brg.local/HOME/jlewis/Python_TEST']
 	highestDir = '//brg-DC-fs1.brg.local/HOME/jlewis/Python_TEST'
 	dirlist = ['//brg-DC-fs1.brg.local/HOME/jlewis/Python_TEST']
+	exclude = ['DO NOT INVENTORY','SKIP ME']
+	# exclude = ['NADA']
 elif usr == 'Young G':
 	dirlistAll = ['//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/GS Work', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/PBC', '//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY/zArchive']
 	highestDir = "//brg-DC-fs1.brg.local/HOME/gsteele/Python DIY"
@@ -39,7 +41,8 @@ else:
 	print('FAIL - DEFINE USER')
 	GoblyGook
 
-#--------------------------------------------------------------------------------------------------
+
+
 #--DEFINE FUNCTIONS
 #--------------------------------------------------------------------------------------------------
 		
@@ -61,6 +64,8 @@ def maximum_id(dirlistAll):
 		ct=0
 	else:
 		ct=max(all_ids)
+
+	print(ct)
 	return(ct)
 
 def wait():
@@ -72,8 +77,8 @@ def get_file_info_refresh(dirName,fname):
 		except IOError:
 			print ("Failed to get information about" +  fname)
 		else:
-			print('\n')
-			print('Refreshed file ' + fname)
+			# print('\n')
+			# print('Refreshed file ' + fname)
 			refresh={}
 			#print(st)
 			BRG_ID = (str(fname[0:12]))
@@ -108,7 +113,7 @@ def get_file_info_original(dirName,fname,desc):
 			orig[BRG_ID]["TO_Create"]=strftime("%Y-%m-%d %H:%M:%S", time.localtime(st.st_ctime))
 			orig[BRG_ID]["Refresh_DT"]=str(datetime.datetime.now())
 			#could add "level" information here
-		return(orig)
+			return(orig)
 
 
 def rename_file(dirName,fname,ct,zs): 
@@ -116,14 +121,15 @@ def rename_file(dirName,fname,ct,zs):
 	ids=str(zs)+str(ct)
 	brg="BRG_"+ids[-8:]
 	desc=brg+" "+fname
-	print("\nAdded File " + desc)
-	os.rename(dirName+"/"+fname,dirName+"/"+desc)
+	# print("\nAdded File " + desc)
+	if fname !='BRG_FILE_INVENTORY.xlsx':
+		os.rename(dirName+"/"+fname,dirName+"/"+desc)
 	return(desc)
 
 def refresh_naming(rootDir): # no longer still used?
 	for dirName, subdirList, fileList in os.walk(rootDir):
 		subdirList[:] = [d for d in subdirList if d not in exclude] 
-		print('Found directory: %s' % dirName)
+		# print('Found directory: %s' % dirName)
 		for fname in fileList:
 			if re.match('BRG_\d',fname[:5]) is not None:
 				reset=re.sub('BRG_\d\d\d\d\d\d\d\d ','',fname)
@@ -134,7 +140,6 @@ def clean():
 		os.chdir(rootDir)
 		refresh_naming(x)
 
-exclude = ['TEST']
 #--------------------------------------------------------------------------------------------------
 #--MASTER OPERATING PEICE
 #--------------------------------------------------------------------------------------------------
@@ -144,30 +149,30 @@ def operating(dirlist):
 	for x in dirlist: # loops through directories listed
 		rootDir=x
 		os.chdir(rootDir)
-		print(os.listdir("."))
+		# print(os.listdir("."))
 		ct=maximum_id(rootDir) #ct is highest numbered BRG #### file i.e. if BRG 001 and BRG 002 in sub, then its 2
 		for dirName, subdirList, fileList in os.walk(rootDir):
 			subdirList[:] = [d for d in subdirList if d not in exclude]
-			print('Found directory: %s' % dirName.replace('\\','/'))
+			# print('Found directory: %s' % dirName.replace('\\','/'))
 			for fname in fileList:
-				if re.match('BRG_\d',fname[:5]) is not None:    #if there already exists a BRG_##### file
-					# Already Been Indexed
-					print(fname + " : Accounted For In System")
-					op_output.append(get_file_info_refresh(dirName.replace('\\','/'),fname)) #get info refresh returns all the info of a particular file; this step is concating all the file info into dta.
-				else: # if there isnt a BRG 0000 name, then find out the highest count in the folder, add 1, rename the current file now have it.
-					# Need To Add
-					print(dirName.replace('\\','/')) 
-					zs='00000000'
-					ct=ct+1
-					desc=rename_file(dirName.replace('\\','/'),fname,ct,zs)
-					op_output.append(get_file_info_original(dirName.replace('\\','/'),fname,desc))
+				if fname != 'BRG_FILE_INVENTORY.xlsx':
+					if re.match('BRG_\d',fname[:5]) is not None:    #if there already exists a BRG_##### file
+						# Already Been Indexed
+						# print(fname + " : Accounted For In System")
+						op_output.append(get_file_info_refresh(dirName.replace('\\','/'),fname)) #get info refresh returns all the info of a particular file; this step is concating all the file info into dta.
+					else: # if there isnt a BRG 0000 name, then find out the highest count in the folder, add 1, rename the current file now have it.
+						# Need To Add
+						# print(dirName.replace('\\','/')) 
+						zs='00000000'
+						ct=ct+1
+						desc=rename_file(dirName.replace('\\','/'),fname,ct,zs)
+						op_output.append(get_file_info_original(dirName.replace('\\','/'),fname,desc))
 	return (op_output)
 
 # # # Run if Need to Reset All Files During Testing
 #--------------------------------------------------------------------------------------------------
 #--OUTPUT
 #--------------------------------------------------------------------------------------------------
-print("\t" + "\t" + "\t"+ "new stuff -----------------------------------------------------")
 # Create data frame in pandas should simplify
 def output(dta):
 	frames = []
@@ -181,31 +186,35 @@ def output(dta):
 	dfFiles = pd.concat(frames)
 	pd.options.display.max_columns = 500
 
-	print(dfFiles.head(20))
-	#if os.path.exists(rootDir+'/BRG_00000001 FileSummary3.xlsx'): #still needs to account for BRG_000003, i.e. if File Summary isn't always the top file
-	 #   os.remove(rootDir+'/BRG_00000001 FileSummary3.xlsx')
+	# print(dfFiles.head(20))
 
-	highest_file = 0
-	highest_file_string = ""
-	print("working")
-	for x in dirlist: # loops through directories listed; removes any old file summaries
-		rootDir=x
-		os.chdir(rootDir)
-		for dirName, subdirList, fileList in os.walk(rootDir):
-			subdirList[:] = [d for d in subdirList if d not in exclude] 
-			for fname in fileList:
-				if re.match('.*BRG_FILE_INVENTORY.*',fname) is not None:    #if there already exists a BRG_##### file
-					print(fname)
-					print(subdirList)
-					print(fileList)
-					print(dirName)
-					fileNumber = fname[4:12]
-					removeZero = fileNumber.replace("0","") 
-					if int(removeZero) > highest_file:
-						highest_file_string = fileNumber
-					os.remove(dirName+"/"+fname)
-	print(highest_file_string)
+	# --------------------------------------------------------------------------------
+	# --LOAD PREVIOUS DATA IDENTIFY FILES ALREADY INVENTORIED
+	# --------------------------------------------------------------------------------
+	# highest_file = 0
+	# highest_file_string = ""
+	# print("working")
+	# for x in dirlist: # loops through directories listed; removes any old file summaries
+	# 	rootDir=x
+	# 	os.chdir(rootDir)
+	# 	for dirName, subdirList, fileList in os.walk(rootDir):
+	# 		subdirList[:] = [d for d in subdirList if d not in exclude] 
+	# 		for fname in fileList:
+	# 			if re.match('.*BRG_FILE_INVENTORY.*',fname) is not None:    #if there already exists a BRG_##### file
+	# 				# print(fname)
+	# 				# print(subdirList)
+	# 				# print(fileList)
+	# 				# print(dirName)
+	# 				fileNumber = fname[4:12]
+	# 				removeZero = fileNumber.replace("0","") 
+	# 				if int(removeZero) > highest_file:
+	# 					highest_file_string = fileNumber
+	# 				os.remove(dirName+"/"+fname)
+	# print(highest_file_string)
 	dfFiles.to_excel(highestDir+'/BRG_FILE_INVENTORY.xlsx', index=True, sheet_name = "File Summary") # as of now will always send it to the last folder location -> easy to change later though
 
 	print("directory work")
-clean()
+
+dta = operating(dirlistAll)
+output(dta)
+# clean()
