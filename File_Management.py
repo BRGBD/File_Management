@@ -50,7 +50,7 @@ class MyFirstGUI:
 		self.label.pack()
 		#Button interface
 		self.greet_button = Button(master, text="Greet", command=self.greet)
-		self.greet_button.pack()
+		
 		#This is our list of objects
 		self.listbox = Listbox(master, width=50, height=20)
 		self.listbox.pack()
@@ -58,7 +58,7 @@ class MyFirstGUI:
 
 		for item in dirlistAll:
 			self.listbox.insert(END, item)
-
+		self.greet_button.pack()
 		
 	def greet(self):
 		print("Greetings!")
