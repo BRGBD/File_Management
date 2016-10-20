@@ -52,6 +52,9 @@ for x in mdirs:
 # dta = fm.operating(dirlist)
 # fm.output(dta)
 
+#FOR GREAT TUTORIAL OF THIS CONSTRUCT see https://www.youtube.com/watch?v=A0gaXfM1UN0&list=PLQVvvaa0QuDclKx-QpC9wntnURXVJqLyk&index=2
+
+
 #--------------------------------------------------------------------------------------------------
 #--DEFINE Classes
 #--------------------------------------------------------------------------------------------------
@@ -62,6 +65,10 @@ class MENU_GUI(Frame):
 		master.title("File Inventory Tool Menu")
 		master.geometry("300x200")
 
+
+        # the container is where we'll stack a bunch of frames
+        # on top of each other, then the one we want visible
+        # will be raised above the others
 
 		#Label interface
 		self.label = Label(master, text="What process would you like to run?")
@@ -89,7 +96,7 @@ class MENU_GUI(Frame):
 
 	def newinventory(self):
 		root = Tk()
-		my_gui = MyFirstGUI(root)
+		my_gui = Parentpage(root)
 		root.mainloop()
 
 	def runinventory(self):
@@ -102,7 +109,8 @@ class MENU_GUI(Frame):
 		xl.Visible = True    # optional: if you want to see the spreadsheet
 
 
-class MyFirstGUI(Frame):
+
+class Parentpage(Frame):
 	def __init__(self, master):
 		Frame.__init__(self, master)
 		self.master = master
@@ -112,11 +120,6 @@ class MyFirstGUI(Frame):
 
 		#Label interface
 		self.label = Label(master, text="Please select files to include/exclude")
-		# self.label.pack()
-		#Button interface
-		self.greet_button = Button(master, text="Greet", command=self.greet)
-		# self.greet_button.pack()
-
 
 		menubar = Menu(self.master)
 		self.master.config(menu=menubar)
@@ -127,16 +130,63 @@ class MyFirstGUI(Frame):
 		r = 0
 		for item in mdirs:
 			r = r + 1
-			self.dir_button=  Button(master, text=item, command=self.onExit).grid(row = r, column=2, sticky=W)
-			self.dir_button = Checkbutton(master, variable=item, onvalue = 1, offvalue = 0, height=2, width = 20, anchor=W)
-			self.dir_button.grid(row = r, column=1, sticky=W)
-			self.dir_button.select()
+			self.dir_name_button=[]
+			self.dir_name_button.append(Button(master, text=item, textvariable=item, command = lambda item=item: self.drill(item)).grid(row = r, column=2, sticky=W))
+			self.dir_check_button = Checkbutton(master, variable=highestDir + '/' + item, onvalue = 1, offvalue = 0, height=2, width = 20, anchor=W)
+			self.dir_check_button.grid(row = r, column=1, sticky=W)
+			self.dir_check_button.select()
 			
 		#Select all/unselect all buttom
 		
 	def greet(self):
 		print("Greetings!")
 
+	def drill(self,item):
+		print(item)
+
 	def onExit(self):
 		self.quit()
+
+class Childpage(Frame):
+	def __init__(self, master, controller):
+		Frame.__init__(self, master)
+		self.master = master
+		master.title("A simple GUI")
+		master.geometry("500x500")
+
+
+		#Label interface
+		self.label = Label(master, text="Please select files to include/exclude")
+
+		menubar = Menu(self.master)
+		self.master.config(menu=menubar)
+		fileMenu = Menu(menubar)
+		menubar.add_command(label="Save Settings", command=self.onExit)
+		menubar.add_command(label="Exit", command=self.onExit)
+
+		r = 0
+		for item in mdirs:
+			r = r + 1
+			self.dir_name_button=[]
+			self.dir_name_button.append(Button(master, text=item, textvariable=item, command = lambda item=item: self.drill(item)).grid(row = r, column=2, sticky=W))
+			self.dir_check_button = Checkbutton(master, variable=highestDir + '/' + item, onvalue = 1, offvalue = 0, height=2, width = 20, anchor=W)
+			self.dir_check_button.grid(row = r, column=1, sticky=W)
+			self.dir_check_button.select()
+			
+		#Select all/unselect all buttom
+		
+	def greet(self):
+		print("Greetings!")
+
+	def drill(self,item):
+		print(item)
+
+	def onExit(self):
+		self.quit()
+
+# Query User for which directories to exclude
+root = tk.Tk()
+my_gui = mi.MENU_GUI(root)
+root.mainloop()
+
 
